@@ -7,6 +7,9 @@ const pug = require('pug');
 
 const app = express();
 
+// models
+const { LineItem, Order, Product } = require('./models').models;
+
 // middleware
 app.use('/vendor', express.static(path.join(__dirname, 'node_modules')));
 app.use(express.static('public')); // serve up the static files in /public
@@ -19,8 +22,12 @@ app.set('views', './views'); // set 'views' to specify the templates dir
 app.set('view engine', 'pug'); // set 'view engine' to specify pug
 
 // handle the root route
-app.use('/', (req, res, next) => {
-  res.render('index', { nav: 'home '});
+app.get('/', (req, res, next) => {
+  return Product.findAll({})
+    .then(products => {
+      res.render('index', { products: products });
+    })
+    .catch(next);
 });
 
 // handle routes to orders.js
@@ -29,7 +36,7 @@ app.use('/orders', require('./routes/orders'));
 // handle errors
 app.use( (err, req, res, next) => {
   console.error(err);
-  res.render('error', { error: err });
+  res.status(err.status || 500).send(err.message);
 });
 
 // exports

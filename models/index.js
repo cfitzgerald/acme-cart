@@ -6,8 +6,9 @@ const Order = require('./Order');
 const Product = require('./Product');
 
 // associations
-
-
+Order.hasMany(LineItem);
+LineItem.belongsTo(Order);
+LineItem.belongsTo(Product);
 
 // sync
 const sync = () => {
@@ -16,7 +17,7 @@ const sync = () => {
 
 // seed
 const seed = () => {
-  return require('./seed')(LinteItem, Order, Product);
+  return require('./seed')(Product);
 };
 
 // exports

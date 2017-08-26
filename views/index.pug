@@ -1,0 +1,29 @@
+extends layout
+
+block content
+ div.row
+
+  div.col-sm-8
+    h2 Products
+    ul.list-group
+      each product in products
+        li.list-group-item
+          form(action='/orders/:id/lineItems' method='POST')
+          |
+          |
+          h3 #{ product.name }
+            button.btn.btn-primary.pull-right Add to Cart!
+            input(type='hidden' value='1' name='productId')
+
+  div.col-sm-4
+    h2 Your Cart
+    div.well
+      ul.list-group
+      form(action='/orders/:id_method=PUT' method='POST')
+        input(type='hidden' name='isCart' value='false')
+        hr
+        div.form-group
+          label Shipping Address
+          input.form-control(name='address')
+          hr
+          button.btn.btn-primary Place Order

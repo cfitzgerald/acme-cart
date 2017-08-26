@@ -6,7 +6,8 @@ const Order = db.define('order', {
     type: Sequelize.BOOLEAN
   },
   address: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false
   }
 });
 
