@@ -15,14 +15,11 @@
     "bootstrap": "^3.3.7",
     "express": "^4.15.4",
     "faker": "^4.1.0",
+    "method-override": "^2.3.9",
     "morgan": "^1.8.2",
+    "path": "^0.12.7",
     "pg": "^7.2.0",
     "pug": "^2.0.0-rc.3",
     "sequelize": "^4.7.5"
-  },
-  "devDependencies": {
-    "chai": "^4.1.1",
-    "mocha": "^3.5.0",
-    "nodemon": "^1.11.0"
   }
 }
