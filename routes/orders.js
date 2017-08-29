@@ -3,15 +3,8 @@ const router = require('express').Router();
 
 module.exports = router;
 
-// router.get('/', (req, res, next) => {
-//   return Product.findAll({})
-//     .then(products => {
-//       res.render('index', { products: products });
-//     })
-//     .catch(next);
-// });
-
 router.put('/:id', (req, res, next) => {
+  console.log('calling update FromRequestBody()...');
   Order.updateFromRequestBody(req.params.id, req.body)
     .then( () => res.redirect('/'))
     .catch(ex => {
@@ -23,12 +16,14 @@ router.put('/:id', (req, res, next) => {
 });
 
 router.post('/:id/lineItems', (req, res, next) => {
+  // console.log('calling addProductToCart()...');
   Order.addProductToCart(+req.body.productId)
     .then( () => res.redirect('/'))
     .catch(next);
 });
 
 router.delete('/:orderId/lineItems/:id', (req, res, next) => {
+  // console.log('calling destroyLineItem()...');
   Order.destroyLineItem(req.params.orderId, req.params.id)
     .then( () => res.redirect('/'))
     .catch(next);

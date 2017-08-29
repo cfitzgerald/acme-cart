@@ -23,9 +23,12 @@ app.set('view engine', 'pug'); // set 'view engine' to specify pug
 
 // handle the root route
 app.get('/', (req, res, next) => {
-  return Product.findAll({})
-    .then(products => {
-      res.render('index', { products: products });
+
+  // get the viewModel...
+  Product.findProductsViewModel()
+    .then(viewModel => {
+      // console.log('viewModel = ', viewModel);
+      res.render('index', { viewModel: viewModel });
     })
     .catch(next);
 });

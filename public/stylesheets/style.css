@@ -13,6 +13,10 @@ a, .btn {
   font-weight: 400;
 }
 
+.bold {
+  font-weight: 700;
+}
+
 .page-header {
   border-bottom: 5px solid #eee;
   padding-bottom: 0;
@@ -62,3 +66,20 @@ ul.list-group {
 .label {
   font-weight: 300;
 }
+
+#order li.order-items {
+  background-color: #fffff0;
+}
+
+/*#f0ffff Azure*/
+/*#f8f8ff GhostWhite*/
+/*#f5f5f5 WhiteSmoke*/
+/*#fffafa Snow*/
+/*#f0fff0 Honeydew*/
+/*#f5fffa MintCream*/
+/*#fffff0 Ivory*/
+/*#faebd7 AntiqueWhite*/
+/*#faf0e6 Linen*/
+/*#fff0f5 LavenderBlush*/
+/*#ffe4e1 MistyRose*/
+

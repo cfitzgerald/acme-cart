@@ -17,7 +17,7 @@ const sync = () => {
 
 // seed
 const seed = () => {
-  return require('./seed')(Product);
+  return require('./seed')(Product, LineItem, Order);
 };
 
 // exports

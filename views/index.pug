@@ -6,20 +6,24 @@ block content
   div.col-sm-8
     h2 Products
     ul.list-group
-      each product in products
+      each product in viewModel.products
         li.list-group-item
-          form(action='/orders/:id/lineItems' method='POST')
-          |
-          |
-          h3 #{ product.name }
-            button.btn.btn-primary.pull-right Add to Cart!
-            input(type='hidden' value='1' name='productId')
+          form(action='/orders/' + viewModel.cart.id + '/lineItems' method='POST')
+            |
+            |
+            h3 #{ product.name }
+              button.btn.btn-primary.pull-right Add to Cart!
+              input(type='hidden' value=product.id name='productId')
 
   div.col-sm-4
     h2 Your Cart
     div.well
       ul.list-group
-      form(action='/orders/:id_method=PUT' method='POST')
+        each lineItem in viewModel.cart.lineItems
+          li.list-group-item #{ lineItem.product.name } #[span.label.label-default.pull-right Quantity: #{ lineItem.quantity }]
+            form(action='/orders/' + viewModel.cart.id + '/lineItems/' + lineItem.id + '?_method=DELETE' method='POST')
+              button.btn.btn-warning.btn-sm Remove From Cart
+      form(action='/orders/' + viewModel.cart.id + '?_method=PUT' method='POST')
         input(type='hidden' name='isCart' value='false')
         hr
         div.form-group
@@ -27,3 +31,17 @@ block content
           input.form-control(name='address')
           hr
           button.btn.btn-primary Place Order
+
+    h2 Order History
+    div#order
+      ul.list-group
+        each order in viewModel.orders
+          li.list-group-item
+            |
+            |
+            h4 Order# #[span.bold #{ order.id }]
+            h4 Ship To: #[span.bold #{ order.address }]
+            ul.list-group
+              each lineItem in order.lineItems
+                li.list-group-item.order-items #{ lineItem.product.name } #[span.label.label-default.pull-right Quantity: #{ lineItem.quantity }]
+

@@ -1,18 +1,20 @@
-module.exports = (Product) => {
-  let product1, product2, product3;
-  return Promise.all([
-    Product.create({ name: 'Plumbus' }),
-    Product.create({ name: 'The Worst Product' }),
-    Product.create({ name: 'The Best Product' }),
+module.exports = (Product, LineItem, Order) => {
+  return Product.bulkCreate([
+    { name: 'Plumbus' },
+    { name: 'The Worst Product' },
+    { name: 'The Best Product' },
   ])
-  .then(([ _product1, _product2, _product3 ]) => {
-    product1 = _product1;
-    product2 = _product2;
-    product3 = _product3;
-    return {
-      product1,
-      product2,
-      product3,
-    };
-  });
+    .then(products => {
+      return Order.bulkCreate([
+        { isCart: true, address: 'NYC' },
+        { isCart: false, address: 'Australia' },
+      ]);
+    })
+    .then(orders => {
+      return LineItem.bulkCreate([
+        { productId: 1, orderId: 1, quantity: 99 },
+        { productId: 2, orderId: 1, quantity: 1 },
+        { productId: 3, orderId: 2, quantity: 1 },
+      ]);
+    })
 };
