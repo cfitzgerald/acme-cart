@@ -5,28 +5,57 @@ const Order = db.define('order', {
   isCart: {
     type: Sequelize.BOOLEAN,
     defaultValue: true,
+    set: function(val) {
+      if (val === 'true') {
+        val = true;
+      }
+      if (val === 'false') {
+        val = false;
+      }
+      this.setDataValue('isCart', val);
+    }
   },
   address: {
     type: Sequelize.STRING,
-    allowNull: false,
   },
 });
 
+//////////////////
+// hooks
+Order.hook('beforeUpdate', function(item) {
+  if (!item.isCart && !item.address) {
+    throw new Error('address required!');
+  }
+});
+
+//////////////////
 // class methods
 
 // get a cart!
 Order.getCart = function() {
   // http://docs.sequelizejs.com/manual/tutorial/models-usage.html#including-everything
   // include -> nested loading for Products associated with LineItems (associated with orders)
-  return Order.findOne({ where: { isCart: true }, include: [{ all: true, nested: true }] })
+
+  return Order.findOne({
+    where: { isCart: true },
+    // include: [{ all: true, nested: true }]
+  })
     .then(cart => {
       // console.log('getCart -> cart = ', cart);
       // cart is null if no true isCarts
-      if (cart === null) {
+      if (!cart) {
         return Order.create({}); // create an Order...address?
       } else {
         return cart;
       }
+    })
+    .then(cart => {
+      return Order.findById(cart.id, {
+        include: {
+          model: db.models.lineItem,
+          include: [ db.models.product ]
+        }
+      });
     });
 };
 
@@ -34,7 +63,14 @@ Order.getCart = function() {
 // -- Place Order
 Order.updateFromRequestBody = function(id, body) {
   // console.log('body = ', body);
-  return Order.update({ address: body.address }, { where: { id: id } });
+
+  return Order.findById(id)
+    .then(order => {
+      Object.assign(order, body);
+      return order.save();
+    });
+
+  // return Order.update({ address: body.address }, { where: { id: id } });
 };
 
 // Order.addProductToCart(+req.body.productId)
@@ -42,27 +78,19 @@ Order.updateFromRequestBody = function(id, body) {
 Order.addProductToCart = function(productId) {
   // console.log('productId = ', productId);
 
-  // need to add product as line item...
-  // if product already exists in cart, just update the LineItem quantity
-  // else, add to cart
-
-  // find product -> Promise
-  // let productToBeAdded = Product.findById(productId);
-
-  return Order.getCart()
+  return this.getCart()
     .then(cart => {
       // console.log('got a cart! ...', cart);
-      return cart.getLineItems(); // getter via hasMany assoc on Order
-    })
-    .then(lineItems => {
-      // console.log('lineItems = ', lineItems);
-      // https://www.linkedin.com/pulse/javascript-find-object-array-based-objects-property-rafael
-      const isProductALineItem = lineItems.find(lineItem => {
-        return lineItem.dataValues.productId === productId;
+      // return cart.getLineItems(); // getter via hasMany assoc on Order
+      let lineItem = cart.lineItems.find(lineItem => lineItem.productId === productId);
+      if (lineItem) {
+        lineItem.quantity++;
+        return lineItem.save();
+      }
+      return db.models.lineItem.create({
+        orderId: cart.id,
+        productId: productId
       });
-      console.log('isProductALineItem = ', isProductALineItem);
-      return isProductALineItem;
-      // need es6 .find() to work + additional logic for if product exists -> quantity ++
     });
 };
 
@@ -70,8 +98,10 @@ Order.addProductToCart = function(productId) {
 // -- Remove From Cart
 Order.destroyLineItem = function(orderId, itemId) {
   // console.log('itemId = ', itemId);
-  return db.models.lineItem.destroy({ where: { id: itemId } }); // orderId?
+
+  return db.models.lineItem.destroy({ where: { id: itemId, orderId: orderId } });
 };
 
+//////////////////
 // exports
 module.exports = Order;

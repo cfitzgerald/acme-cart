@@ -40,11 +40,6 @@ ul.list-group {
   margin-right: 10px;
 }
 
-/*.btn-danger {
-  background-color: #eee;
-  color: #d9534f;
-}
-*/
 .btn-primary {
   background-color: #eee;
   color: #337ab7;
@@ -53,14 +48,6 @@ ul.list-group {
 .btn-warning {
   background-color: #eee;
   color: #f0ad4e;
-}
-
-.award {
-  list-style: decimal;
-}
-
-.award button {
-  margin-top: 5px;
 }
 
 .label {
